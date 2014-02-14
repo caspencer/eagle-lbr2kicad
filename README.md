@@ -14,3 +14,4 @@ Authors:
 - Biglacko (biglacko _at_ startolj.hu)
 - Sergiusz Urbaniak (sergiusz.urbaniak _at_ gmail.com)
 - Wawszczak
+- caspencer

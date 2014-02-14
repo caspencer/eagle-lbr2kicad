@@ -1,4 +1,4 @@
-#usage "<b>KiCAD module exporting tool  version 0.9e (0.91)</b>\n"
+#usage "<b>KiCAD module exporting tool  version 0.9f (0.92)</b>\n"
        "<p>"
        "This ULP can exports Eagle CAD Package and Symbol contents into KiCAD lib and module format."
        "<p>"
@@ -8,6 +8,9 @@
        "<author>Author: juergen.messerer (at) freesurf.ch</author>"
 /*
  * CHANGELOG=(dd.mm.yyyy)===============================================
+ * 14.02.2014: Fix "Multiple contacts on pin, use contacts() instead" error
+ *             in Eagle 6.0 (and later) when multiple pads are connected to same pin.
+ *
  * 28.12.2012: Fixed BUG: wrong scaling of elements
  *             Now compatible with Eagle 6.3 and KiCad Build 2012-01-19 by Wawszczak
  *
@@ -52,7 +55,7 @@
  *          Version 2.
  * ==========================================================================*/     	 
 
-real VERSION   = 0.91;
+real VERSION   = 0.92;
     
 int rect_conv  = 1;	// many QFP-like packages use rectangles as a pin contour (too much segments in the ki-format)
 int poly_conv  = 1;
@@ -763,6 +766,7 @@ void write_kikad_pins( UL_GATE G, int  transX, int transY, int gatePos )
       string pinContact = "";
       int    posX       = P.x/g_Fact - transX;
       int    posY       = P.y/g_Fact - transY;
+      int    padCount   = 0;
 
       if(pinCount >= 9999 )
       {
@@ -883,18 +887,25 @@ void write_kikad_pins( UL_GATE G, int  transX, int transY, int gatePos )
                pinShape  = "";
             break;
          }
-      	 
-      if(P.contact)
+      
+      P.contacts(pad)
       {
-         printf( "X %s %s %d %d %d %c %d %d %d %d %c %s\n", P.name, P.contact.name,
-                                                            posX, posY,
-                                                            pinLength, orient,
-                                                            40, 40, gatePos, 1,
-                                                            pinType, pinShape );
+        if (padCount > 0)
+        {
+          pinShape = "N";
+        }
+
+        printf( "X %s %s %d %d %d %c %d %d %d %d %c %s\n", P.name, pad.name,
+                                                                  posX, posY,
+                                                                  pinLength, orient,
+                                                                  40, 40, gatePos, 1,
+                                                                  pinType, pinShape );
+        padCount++;
       }
-      else
+
+      if(padCount == 0)
       {
-         printf( "X %s %s %d %d %d %c %d %d %d %d %c %s\n", P.name, "~",
+        printf( "X %s %s %d %d %d %c %d %d %d %d %c %s\n", P.name, "~",
                                                             posX, posY,
                                                             pinLength, orient,
                                                             40, 40, gatePos, 1,
