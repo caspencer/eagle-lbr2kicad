@@ -8,9 +8,11 @@
        "<author>Author: juergen.messerer (at) freesurf.ch</author>"
 /*
  * CHANGELOG=(dd.mm.yyyy)===============================================
- * 14.02.2014: Fix "Multiple contacts on pin, use contacts() instead" error
- *             in Eagle 6.0 (and later) when multiple pads are connected to same pin.
- *
+ * 14.02.2014: - Fix "Multiple contacts on pin, use contacts() instead" error in
+ *               Eagle 6.0 (and later) when multiple pads are connected to same pin. (caspencer)
+ *             - Fix issue with incorrect smd/pad angles
+ *               thanks to: Jan Phillip Willmann (jantek.willmann at gmail.com)
+ * 
  * 28.12.2012: Fixed BUG: wrong scaling of elements
  *             Now compatible with Eagle 6.3 and KiCad Build 2012-01-19 by Wawszczak
  *
@@ -267,7 +269,7 @@ void write_kikad_mod_pad(UL_PACKAGE PAC)
 {
 	char shp = 'R'; 
 	string signal, type = "STD";
-	int dx, dy, drill, layset;
+	int angle = 0, dx, dy, drill, layset;
 	
   PAC.contacts(CN)
   {
@@ -287,6 +289,7 @@ void write_kikad_mod_pad(UL_PACKAGE PAC)
         else 
           shp = 'O';
       }
+      angle = CN.smd.angle;
       dx = CN.smd.dx;
       dy = CN.smd.dy;
       layset = CN.smd.layer;
@@ -309,6 +312,7 @@ void write_kikad_mod_pad(UL_PACKAGE PAC)
 	  if(CN.pad.shape[LAYER_TOP] == PAD_SHAPE_LONG ) 
 	  {
 		shp = 'O';
+                angle = CN.pad.angle + 90;
 		dy = CN.pad.diameter[LAYER_TOP] * 2;
 	  }
 
@@ -320,7 +324,7 @@ void write_kikad_mod_pad(UL_PACKAGE PAC)
 
           // pad shape
 	  printf("Sh \"%s\" %c %d %d %d %d %d\n",
-	  CN.name, shp, egl2ki(dx), egl2ki(dy), 0, 0, 0);
+	  CN.name, shp, egl2ki(dx), egl2ki(dy), 0, 0, angle * 10);
 	  
 	  printf("Dr %d %d %d \n", egl2ki(drill), 0, 0);
 	  

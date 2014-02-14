@@ -13,5 +13,6 @@ Authors:
 - Jürgen Messerer (juergen.messerer _at_ freesurf.ch)
 - Biglacko (biglacko _at_ startolj.hu)
 - Sergiusz Urbaniak (sergiusz.urbaniak _at_ gmail.com)
+- Jan Phillip Willmann (jantek.willmann at gmail.com)
 - Wawszczak
 - caspencer
