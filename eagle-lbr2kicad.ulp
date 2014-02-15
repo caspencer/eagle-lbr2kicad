@@ -1,3 +1,4 @@
+
 #usage "<b>KiCAD module exporting tool  version 0.9f (0.92)</b>\n"
        "<p>"
        "This ULP can exports Eagle CAD Package and Symbol contents into KiCAD lib and module format."
@@ -244,6 +245,26 @@ int issmd(UL_PACKAGE PAC)
 
 }
 
+//------------------------------------------------------
+//Replaces all occurrences of a substring found within a string.
+//------------------------------------------------------
+string str_replace(string search, string replace, string subject)
+{
+    int lastpos = 0;
+    while(strstr(subject, search, lastpos) >= 0) {
+        int pos = strstr(subject, search, lastpos);
+        string before = strsub(subject, 0, pos);
+        string after = strsub(subject, pos + strlen(search));
+        subject = before + replace + after;
+        lastpos = pos + strlen(replace);
+    }
+    return subject;
+}
+
+string escape_quotes(string input)
+{
+  return str_replace(input, "\"", "\\\"");  
+}
 
 //------------------------------------------------------
 //write index of modules
@@ -1016,7 +1037,7 @@ void write_kikad_def_alias( UL_DEVICE DEV, UL_GATE G, string symbolName, int cou
    if( DEV.prefix == "" )
    {
       if( DEV.name == "" )
-         printf("F0 \"%s\" %d %d %d %c %c %c %c\n", symbolName, name_X, name_Y, 50, 
+         printf("F0 \"%s\" %d %d %d %c %c %c %c\n", escape_quotes(symbolName), name_X, name_Y, 50, 
                                                     orient, 'V', hAlign, vAlign);
    }
    else
@@ -1025,7 +1046,7 @@ void write_kikad_def_alias( UL_DEVICE DEV, UL_GATE G, string symbolName, int cou
                                                           50, orient, 'V', hAlign, vAlign);
       if( DEV.name != "" )
       {   
-         printf("F1 \"%s\" %d %d %d %c %c %c %c\n", symbolName, name_X, name_Y, 
+         printf("F1 \"%s\" %d %d %d %c %c %c %c\n", escape_quotes(symbolName), name_X, name_Y, 
                                                     50, orient, 'V', hAlign, vAlign);
          if( DEV.package )
             printf("F2 \"%s-%s\" 0 150 50 H I C C\n", DEV.library, DEV.package.name);
