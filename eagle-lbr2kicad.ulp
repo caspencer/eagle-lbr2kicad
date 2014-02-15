@@ -1077,7 +1077,7 @@ void write_kikad_lib( string fileName )
          int t = time();
          printf("EESchema-LIBRARY Version 2.3  %02d/%02d/%04d-%02d:%02d:%02d\n",
          t2day(t), t2month(t)+1, t2year(t), t2hour(t), t2minute(t), t2second(t));  
-	 printf("# Converted with eagle2kicad.ulp Version %.1f\n", VERSION);     
+	 printf("# Converted with eagle2kicad.ulp Version %.2f\n", VERSION);     
 
 	 int countDevices = 0; 
          LIB.devices(DEV)
@@ -1203,7 +1203,7 @@ string ref;
 int sameDir = 0;
 string titleString;
 
-sprintf( titleString, "Export to KiCAD, Version %.1f", VERSION );
+sprintf( titleString, "Export to KiCAD, Version %.2f", VERSION );
 
 if (library)  
 {
